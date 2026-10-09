@@ -1,0 +1,37 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: saga-inventory-service
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: saga-group
+      auto-offset-reset: earliest
+      #      the topic name we are using as string so using string Deserializer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      #      the value we are using the Order obj, and since it will be in json format or using json deserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        #        which packages to trust
+        spring.json.trusted.packages: "*"
+        #        Validation to restrict what type of object consumer should be receiving
+        spring.json.value.default.type: com.example.saga_inventory_service.dto.Order
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.add.type.header: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/saga_db
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
